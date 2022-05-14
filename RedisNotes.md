@@ -198,4 +198,72 @@ Console.WriteLine(stat.Sport);
 
 Use the RedisCacheDemo console app to demo basic C# functionality.
 
+In addition to the app, do the following walkthrough:
 
+[https://docs.microsoft.com/en-us/learn/modules/develop-for-azure-cache-for-redis/5-console-app-azure-cache-redis](Redis Cache)
+
+
+## Optimize your web applications by caching read-only data with Redis
+
+The third learn module is [Optimize your web applications by caching read-only data with Redis](https://docs.microsoft.com/en-us/learn/modules/optimize-your-web-apps-with-redis/)  
+
+### Information about keys
+
+Avoid Long keys.  Max size 512MB.
+
+Make keys readable and descriptive, even if it means adding a few more characters.
+
+For example:
+movie:scifi:title:Inception
+
+object:category:id:number
+
+### How is data stored
+
+Nodes and clusters
+
+Node = space where data is stored
+Cluster = 3+ Nodes, provides redundancy
+
+### Architectures
+
+- Single Node  [Basic Tier]
+- Multiple Node [Standard Tier]
+- Clustered [Premium Tier +]
+  
+### Configure and deploy Cache
+
+Go through deployment in Azure.
+
+Persistence:
+
+- None
+- RDB
+- AOF
+
+
+### Live Exercise
+
+https://docs.microsoft.com/en-us/learn/modules/optimize-your-web-apps-with-redis/4-exercise-create-redis-cache?pivots=csharp
+
+- Create the cache
+- Write .Net code to execute against it [same as the first exercise really, just has an Azure Sandbox so you can play without a subscription.
+
+
+## Work with mutable and partial data in Azure Cache for Redis
+
+The fourth learn module is [Work with mutable and partial data in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/work-with-mutable-and-partial-data-in-a-redis-cache/)  
+
+### TODO
+
+## Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis
+
+The fifth learn module is [Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/aspnet-session/)  
+
+### TODO 
+
+## Implement Pub/Sub and Streams in Azure Cache for Redis
+
+The final learn module is [Implement Pub/Sub and Streams in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/azure-redis-publish-subscribe-streams/)  
+
+### TODO
