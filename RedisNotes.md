@@ -254,7 +254,99 @@ https://docs.microsoft.com/en-us/learn/modules/optimize-your-web-apps-with-redis
 
 The fourth learn module is [Work with mutable and partial data in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/work-with-mutable-and-partial-data-in-a-redis-cache/)  
 
-### TODO
+### Transactions
+
+Utilize ServiceStack.Redis in .Net
+
+- CreateTransaction()
+- QueueCommand()
+- Commit()
+
+Get the connection string:
+
+```C#
+rg=rg-name-here
+redis_name=redis-cache-name-here
+
+redis_key=$(az redis list-keys \
+    --name "$redis_name" \
+    --resource-group $rg \
+    --query primaryKey \
+    --output tsv)
+
+echo $redis_key
+echo "$redis_key"@"$redis_name".redis.cache.windows.net:6380?ssl=true
+```  
+
+Use the connection string:
+
+```c#
+private static bool UtilizeTransactions(Dictionary<string, string> data, int expirationSeconds)
+{
+    bool transactionResult = false;
+
+    var redisConnectionString = _configuration["Redis:RedisConnectionString"];
+    using (RedisClient redisClient = new RedisClient(redisConnectionString))
+    {
+        using (var transaction = redisClient.CreateTransaction())
+        {
+            //Add multiple operations to the transaction
+            foreach (var item in data)
+            {
+                transaction.QueueCommand(c => c.Set(item.Key, item.Value));
+                if (expirationSeconds > 0)
+                {
+                    transaction.QueueCommand(c => ((RedisNativeClient)c).Expire(item.Key, expirationSeconds));
+                }
+            }
+
+            //Commit and get result of transaction
+            transactionResult = transaction.Commit();
+        }
+    }
+
+    Console.WriteLine(transactionResult ? "Transaction committed" : "Transaction failed to commit");
+    
+    return transactionResult;
+}
+``` 
+
+>**Note:** Code for the expiration is included above to avoid repetitive posting.
+
+#### Expirations
+
+If you want, you can set keys to expire after a certain number of seconds.  See the code sample ablve.
+
+#### Eviction policies and Memory Management
+
+Azure provides a number of eviction policies to handle working with Redis when you are out of memory.  
+
+|--|--|
+| Title | Purpose |   
+| **noeviction** | No eviction - errors are thrown when you are out of memory |
+| **allkeys-lru** | Looks at all keys and removes the least-recently-used key |  
+| **allkeys-random** | Looks at all keys and removes one at random |
+| **allkeys-lfu** | Looks at all keys and removes the least-frequently-used key |  
+| **volatile-lru** | Looks at all keys with expiration set and removes the least-recently-used of these keys |  
+| **volatile-ttl** | Looks at all keys with expiration set and removes the key from these with the least remaining time to live |  
+| **volatile-random** | Looks at all keys with expiration set and removes a key from these at random |
+| **volatile-lfu** | Looks at all keys with expiration set and removes the least-frequently used key from these |   
+
+#### Cache-Aside
+
+Put data from your database into REDIS to avoid having to make a trip back to the database for it.
+
+For example, the states of the United States.  You don't need to modify this data much, if ever.  It just needs to be available.  You can use in-memory cache, but you can also just as easily use Redis.
+
+When doing cache-aside, ensure that you evaluate and plan for the following:
+
+- Lifetime: Make sure that the cache lifetime makes sense.  Use shorter lifetimes for volatile data, longer lifetimes for data that changes infrequently.  
+
+- Evicting: Ensure the correct data will be the first to be evicted (see above)  
+
+- Priming: It is often useful to pre-load some of the cache.  You will want to consider what to prime and how to prime it.
+
+- Consistency: Consider the cost of dirty reads and how you might work to prevent stale data and ensure conflicts are handled appropriately.  
 
 ## Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis
 
