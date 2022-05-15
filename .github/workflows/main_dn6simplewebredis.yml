@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  AZURE_WEBAPP_NAME: dn6simplewebredis 
+
 jobs:
   build-and-deploy:
     name: Build And Deploy to Azure
