@@ -352,7 +352,20 @@ When doing cache-aside, ensure that you evaluate and plan for the following:
 
 The fifth learn module is [Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/aspnet-session/)  
 
-### TODO 
+### Practical uses
+
+Storing session state in an app service using Redis can make your application much more scalable.  Additionally, you can leverage this pattern for migration of legacy applications that are storing much larger state values (Viewstate anyone?).  
+
+By using Redis, you therefore solve two problems:
+
+- Large sessions are easily managed without memory issues that might be typically encountered
+- Session state just works across a web farm (instances).
+
+### Set up application
+
+In order to leverage Azure Redis for session state, you need to set up the application.  This repo has an accompanying web application that leverages  Redis to utilize session state and cache-aside for a dn6 web application.  
+
+
 
 ## Implement Pub/Sub and Streams in Azure Cache for Redis
 

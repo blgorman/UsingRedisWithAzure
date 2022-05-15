@@ -11,24 +11,24 @@ env:
 
 jobs:
   build-and-deploy:
-    name: Build And Deploy to Azure
+    name: 'Build And Deploy to Azure'
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up .NET Core
+      - name: 'Set up .NET Core'
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
 
-      - name: Install Dependencies
+      - name: 'Install Dependencies'
         run: dotnet restore
-      - name: Build with dotnet
+      - name: 'Build with dotnet'
         run: dotnet build --configuration Release
-      - name: Test
+      - name: 'Test'
         run: dotnet test --no-restore --verbosity normal
-      - name: dotnet publish
+      - name: 'dotnet publish'
         run: | 
           dotnet publish -c Release -o dotnetcorewebapp
 
