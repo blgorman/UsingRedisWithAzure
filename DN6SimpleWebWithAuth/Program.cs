@@ -1,4 +1,3 @@
-using Azure.Identity;
 using DN6SimpleWebWithAuth.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
