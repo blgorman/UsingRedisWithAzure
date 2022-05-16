@@ -321,8 +321,8 @@ If you want, you can set keys to expire after a certain number of seconds.  See 
 
 Azure provides a number of eviction policies to handle working with Redis when you are out of memory.  
 
-|--|--|
 | Title | Purpose |   
+|--|--|
 | **noeviction** | No eviction - errors are thrown when you are out of memory |
 | **allkeys-lru** | Looks at all keys and removes the least-recently-used key |  
 | **allkeys-random** | Looks at all keys and removes one at random |
