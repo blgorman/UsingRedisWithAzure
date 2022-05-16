@@ -26,9 +26,20 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
 
 /* Add Redis */
-var redisSection = builder.Configuration.GetSection("Redis");
-var redisCNSTR = redisSection.GetValue<string>("ConnectionString").ToString();
-var redisInstanceName = redisSection.GetValue<string>("InstanceName");
+
+string redisCNSTR = string.Empty;
+var env = builder.Configuration["Application:Environment"];
+
+if (string.IsNullOrWhiteSpace(env) || !env.Equals("develop", StringComparison.OrdinalIgnoreCase))
+{
+    redisCNSTR = builder.Configuration["REDIS_CONNECTION_STRING"];
+}
+else
+{
+    var redisSection = builder.Configuration.GetSection("Redis");
+    redisCNSTR = redisSection.GetValue<string>("ConnectionString").ToString();
+    var redisInstanceName = redisSection.GetValue<string>("InstanceName");
+}
 
 //Turn this on to use session data in Redis and avoid using cookies for logins
 ////session
