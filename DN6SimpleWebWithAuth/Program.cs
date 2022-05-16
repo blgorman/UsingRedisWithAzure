@@ -2,6 +2,7 @@ using DN6SimpleWebWithAuth;
 using DN6SimpleWebWithAuth.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +30,15 @@ var redisSection = builder.Configuration.GetSection("Redis");
 var redisCNSTR = redisSection.GetValue<string>("ConnectionString").ToString();
 var redisInstanceName = redisSection.GetValue<string>("InstanceName");
 
-////session?
+//Turn this on to use session data in Redis and avoid using cookies for logins
+////session
+//builder.Services.AddSession(o =>
+//{
+//    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//    o.Cookie.Name = "DemoRedis.Session";
+//    o.Cookie.HttpOnly = true;
+//});
+
 //builder.Services.AddStackExchangeRedisCache(options =>
 //{
 //    options.Configuration = builder.Configuration.GetConnectionString(redisCNSTR);
@@ -89,6 +98,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+////turn this on to use session data in redis
+//app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
