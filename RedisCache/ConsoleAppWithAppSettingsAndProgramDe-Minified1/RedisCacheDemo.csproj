@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="State.cs~RFf16b39f.TMP" />
   </ItemGroup>
 
   <ItemGroup>

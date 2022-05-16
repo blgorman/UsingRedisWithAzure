@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-DN6SimpleWebWithAuth-C1900FCB-0526-4B42-A831-BE90234ED33C</UserSecretsId>
+    <UserSecretsId>redis-demo-prework-C1900FCB-0526-4B42-A831-BE90234ED33C</UserSecretsId>
     <ApplicationInsightsResourceId>/subscriptions/29bf2f65-5f85-4148-826b-ed65bfffe050/resourcegroups/Opsgility-AzureAToZ/providers/Microsoft.Insights/components/DN6SimpleWebWithAuth</ApplicationInsightsResourceId>
   </PropertyGroup>
 
