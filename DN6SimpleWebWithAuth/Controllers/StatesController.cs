@@ -7,36 +7,89 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DN6SimpleWebWithAuth.Data;
 using DN6SimpleWebWithAuth.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace DN6SimpleWebWithAuth.Controllers
 {
+    //some code from: https://github.com/Azure-Samples/azure-cache-redis-samples/blob/main/quickstart/aspnet-core/ContosoTeamStats/Controllers/HomeController.cs
     public class StatesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly Task<RedisConnection> _redisConnectionFactory;
+        private RedisConnection _redisConnection;
+        private readonly IConfiguration _configuration;
 
-        public StatesController(ApplicationDbContext context)
+        private const string STATES_KEY = "States";
+
+        public StatesController(ApplicationDbContext context, IConfiguration configuration, Task<RedisConnection> redisConnectionFactory)
         {
             _context = context;
+            _configuration = configuration;
+            _redisConnectionFactory = redisConnectionFactory;
+        }
+
+        private async Task<List<State>> GetStates()
+        {
+            return await _context.States.OrderBy(x => x.Name).ToListAsync();
+        }
+
+        private async Task<List<State>> AddOrUpdateStatesInCache()
+        {
+            var states = await GetStates();
+            var statesJSON = JsonSerializer.Serialize(states);
+
+            //add to cache
+            _redisConnection = await _redisConnectionFactory;
+            await _redisConnection.BasicRetryAsync(async (db) => await db.StringSetAsync(STATES_KEY, statesJSON));
+
+            return states;
+        }
+
+        private async Task<List<State>> GetStatesFromCache()
+        {
+            _redisConnection = await _redisConnectionFactory;
+            var result = (await _redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync(STATES_KEY))).ToString();
+            
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                return await AddOrUpdateStatesInCache();
+            }
+                
+            var data = JsonSerializer.Deserialize<List<State>>(result);
+            return data;
+        }
+
+        private async Task InvalidateStates()
+        {
+            _redisConnection = await _redisConnectionFactory;
+            await _redisConnection.BasicRetryAsync(async (db) => await db.KeyDeleteAsync(STATES_KEY));
         }
 
         // GET: States
         public async Task<IActionResult> Index()
         {
-              return _context.States != null ? 
-                          View(await _context.States.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.States'  is null.");
+            var states = await GetStatesFromCache();
+
+            return states != null && states.Any() ?
+                        View(states) :
+                        Problem("Entity set and/or cache for 'ApplicationDbContext.States'  is null.");
         }
 
         // GET: States/Details/5
         public async Task<IActionResult> Details(int? id)
-        {
+        { 
             if (id == null || _context.States == null)
             {
                 return NotFound();
             }
 
-            var state = await _context.States
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var states = await GetStatesFromCache();
+            var state = states.FirstOrDefault(m => m.Id == id);
             if (state == null)
             {
                 return NotFound();
@@ -62,6 +115,7 @@ namespace DN6SimpleWebWithAuth.Controllers
             {
                 _context.Add(state);
                 await _context.SaveChangesAsync();
+                await InvalidateStates();
                 return RedirectToAction(nameof(Index));
             }
             return View(state);
@@ -75,7 +129,8 @@ namespace DN6SimpleWebWithAuth.Controllers
                 return NotFound();
             }
 
-            var state = await _context.States.FindAsync(id);
+            var states = await GetStatesFromCache();
+            var state = states.FirstOrDefault(m => m.Id == id);
             if (state == null)
             {
                 return NotFound();
@@ -99,8 +154,12 @@ namespace DN6SimpleWebWithAuth.Controllers
             {
                 try
                 {
-                    _context.Update(state);
+                    var stateToUpdate = await _context.States.FirstOrDefaultAsync(m => m.Id == id);
+                    stateToUpdate.Abbreviation = state.Abbreviation;
+                    stateToUpdate.Name = state.Name;
+                    _context.Update(stateToUpdate);
                     await _context.SaveChangesAsync();
+                    await InvalidateStates();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,8 +185,8 @@ namespace DN6SimpleWebWithAuth.Controllers
                 return NotFound();
             }
 
-            var state = await _context.States
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var states = await GetStatesFromCache();
+            var state = states.FirstOrDefault(m => m.Id == id);
             if (state == null)
             {
                 return NotFound();
@@ -152,6 +211,7 @@ namespace DN6SimpleWebWithAuth.Controllers
             }
             
             await _context.SaveChangesAsync();
+            await InvalidateStates();
             return RedirectToAction(nameof(Index));
         }
 

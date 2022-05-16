@@ -365,6 +365,36 @@ By using Redis, you therefore solve two problems:
 
 In order to leverage Azure Redis for session state, you need to set up the application.  This repo has an accompanying web application that leverages  Redis to utilize session state and cache-aside for a dn6 web application.  
 
+Although this is covered for legacy .Net apps in Learn, the latest follows this pattern:
+
+https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-6.0#distributed-redis-cache
+
+An additional NuGet package is needed:
+
+```powershell
+Install-Package Microsoft.Extensions.Caching.StackExchangeRedis
+```
+
+Then add the following code to the Program.cs file (in the minimal API .Net 6, there is no Startup.cs file)
+
+```C#
+/* Add Redis */
+//assumes you added something to local config (secrets!)/app configuration at Azure
+var redisSection = builder.Configuration.GetSection("Redis");
+var redisCNSTR = redisSection.GetValue<string>("ConnectionString").ToString();
+var instanceName = redisSection.GetValue<string>("InstanceName");
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString(redisCNSTR);
+    options.InstanceName = "SampleInstance";
+});
+ ```  
+
+Additionally, code from this sample is modified:
+
+[Azure Samples -- Redis Cache](https://github.com/Azure-Samples/azure-cache-redis-samples/blob/main/quickstart/aspnet-core/ContosoTeamStats/RedisConnection.cs)
+
 
 
 ## Implement Pub/Sub and Streams in Azure Cache for Redis

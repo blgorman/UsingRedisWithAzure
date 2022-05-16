@@ -1,3 +1,4 @@
+using DN6SimpleWebWithAuth;
 using DN6SimpleWebWithAuth.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
+
+/* Add Redis */
+var redisSection = builder.Configuration.GetSection("Redis");
+var redisCNSTR = redisSection.GetValue<string>("ConnectionString").ToString();
+var redisInstanceName = redisSection.GetValue<string>("InstanceName");
+
+////session?
+//builder.Services.AddStackExchangeRedisCache(options =>
+//{
+//    options.Configuration = builder.Configuration.GetConnectionString(redisCNSTR);
+//    options.InstanceName = redisInstanceName;
+//});
+
+//Direct access to the cache
+builder.Services.AddSingleton(async x => await RedisConnection.InitializeAsync(connectionString: redisCNSTR));
+
 
 /* NOTE: To enable the use of AppConfiguration and Keyvault integration, uncomment the following code,
  *          and ENSURE you have a system managed identity for both app services at Azure,
