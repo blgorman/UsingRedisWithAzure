@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="LineItem.cs~RFcb024e7.TMP" />
+    <None Remove="Product.cs~RFcb0fcb9.TMP" />
+  </ItemGroup>
+
+</Project>

@@ -396,9 +396,55 @@ Additionally, code from this sample is modified:
 [Azure Samples -- Redis Cache](https://github.com/Azure-Samples/azure-cache-redis-samples/blob/main/quickstart/aspnet-core/ContosoTeamStats/RedisConnection.cs)
 
 
-
 ## Implement Pub/Sub and Streams in Azure Cache for Redis
 
 The final learn module is [Implement Pub/Sub and Streams in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/azure-redis-publish-subscribe-streams/)  
 
-### TODO
+Additional resources
+
+- [StackExchange.Redis on GitHub](https://stackexchange.github.io/StackExchange.Redis/PubSubOrder.html)  
+
+### Purpose
+
+Use Pub/Sub to break up workloads into distributed microservices, or just offset and separate the performance of one app from another (i.e. allow many streams of data to be input from the front-end and then throttle the back-end processing without having to pay any penalty on the front-end).
+
+### Channels
+
+For Pub/Sub, you create a channel and then your clients can subscribe to it.
+
+In addition to directly subscribing to a channel, you can subscribe to channels that match a pattern.
+
+- `?` : Single Character
+- `*` : Any Content
+- `[]` : Chars in the list
+
+### Publishing
+
+Push messages to the channel
+
+```C#
+
+```  
+### Message Order
+
+Queue functionality guarantees order
+
+```c#
+var channel = multiplexer.GetSubscriber().Subscribe("messages");
+channel.OnMessage(message =>
+{
+    Console.WriteLine((string)message.Message);
+});
+```  
+
+Whereas concurrent processing has no order guarantee
+
+```c#
+var channel = multiplexer.GetSubscriber().Subscribe("messages", (channel, message) => {
+    Console.WriteLine((string)message);
+});
+```  
+
+Using this, you can create a pub/sub architecture.
+
+
