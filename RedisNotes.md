@@ -252,7 +252,7 @@ https://docs.microsoft.com/en-us/learn/modules/optimize-your-web-apps-with-redis
 
 ## Work with mutable and partial data in Azure Cache for Redis
 
-The fourth learn module is [Work with mutable and partial data in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/work-with-mutable-and-partial-data-in-a-redis-cache/)  
+The fourth learn module is [Work with mutable and partial data in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/work-with-mutable-and-partial-data-in-a-redis-cache/?WT.mc_id=AZ-MVP-5004334)  
 
 ### Transactions
 
@@ -350,7 +350,7 @@ When doing cache-aside, ensure that you evaluate and plan for the following:
 
 ## Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis
 
-The fifth learn module is [Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/aspnet-session/)  
+The fifth learn module is [Improve session scalability in a .NET Framework ASP.NET web application by using Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/aspnet-session/?WT.mc_id=AZ-MVP-5004334)  
 
 ### Practical uses
 
@@ -367,7 +367,9 @@ In order to leverage Azure Redis for session state, you need to set up the appli
 
 Although this is covered for legacy .Net apps in Learn, the latest follows this pattern:
 
-https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-6.0#distributed-redis-cache
+[https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-6.0#distributed-redis-cache](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-6.0#distributed-redis-cache?WT.mc_id=AZ-MVP-5004334)
+
+and this demo [https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/cache-web-app-aspnet-core-howto](https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/cache-web-app-aspnet-core-howto?WT.mc_id=AZ-MVP-5004334) 
 
 An additional NuGet package is needed:
 
@@ -393,12 +395,11 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 Additionally, code from this sample is modified:
 
-[Azure Samples -- Redis Cache](https://github.com/Azure-Samples/azure-cache-redis-samples/blob/main/quickstart/aspnet-core/ContosoTeamStats/RedisConnection.cs)
-
+[Azure Samples -- Redis Cache](https://github.com/Azure-Samples/azure-cache-redis-samples/blob/main/quickstart/aspnet-core/ContosoTeamStats/RedisConnection.cs?WT.mc_id=AZ-MVP-5004334)
 
 ## Implement Pub/Sub and Streams in Azure Cache for Redis
 
-The final learn module is [Implement Pub/Sub and Streams in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/azure-redis-publish-subscribe-streams/)  
+The final learn module is [Implement Pub/Sub and Streams in Azure Cache for Redis](https://docs.microsoft.com/en-us/learn/modules/azure-redis-publish-subscribe-streams/?WT.mc_id=AZ-MVP-5004334)  
 
 Additional resources
 
@@ -423,7 +424,12 @@ In addition to directly subscribing to a channel, you can subscribe to channels 
 Push messages to the channel
 
 ```C#
+using (var cache = ConnectionMultiplexer.Connect(connectionString))
+{
+    var pub = cache.GetSubscriber();
 
+    pub.Publish(MessageChannel, "some message");
+}
 ```  
 ### Message Order
 
@@ -446,5 +452,3 @@ var channel = multiplexer.GetSubscriber().Subscribe("messages", (channel, messag
 ```  
 
 Using this, you can create a pub/sub architecture.
-
-
