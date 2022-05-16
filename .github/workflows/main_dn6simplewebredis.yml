@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: dn6simplewebredis 
+  AZURE_WEBAPP_NAME: dn6redisdemolive20220516 
 
 jobs:
   build-and-deploy:
